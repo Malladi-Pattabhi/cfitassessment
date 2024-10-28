@@ -6,9 +6,10 @@ import torch
 import numpy as np
 import google.generativeai as genai
 
-# Configure the API with your Gemini API Key
-GOOGLE_API_KEY = "AIzaSyBAVK69eBapQDikMaKdj7WFwBnR1-PIs6A"
-genai.configure(api_key=GOOGLE_API_KEY)
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gen-lang-client-0711936357-ec9fd589702f.json"
+
+# Directly assign the API key
+api_key = "AIzaSyBAVK69eBapQDikMaKdj7WFwBnR1-PIs6A"
 
 # File paths
 file_pathj = 'job_descriptions.xlsx'
