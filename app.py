@@ -87,12 +87,13 @@ def generate_gemini_assessment(job_description, resume_text, behavioral_answers)
     Please assess the culture fit based on alignment with company culture pillars and provide a score and reasoning.
     """
     try:
-        response = model.generate_content(
+        # Call to generate content directly with all necessary configuration included
+        response = genai.generate_content(
             model="gemini-1.5-flash",
             prompt=prompt,
-            generation_config=generation_config
+            **generation_config
         )
-        return response
+        return response.text if response else "No response generated."
     except Exception as e:
         return f"Error during API call: {e}"
 
