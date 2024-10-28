@@ -7,7 +7,7 @@ import numpy as np
 import google.generativeai as genai
 
 # Configure the API with your Gemini API Key
-GOOGLE_API_KEY = "AIzaSyCxOYdu26nvKLOrvDNEgWZdo2RwC3JLYvY"
+GOOGLE_API_KEY = "AIzaSyCbRx_gwIgU_XGBTI1IQyV3X6-F-QyWId8"
 genai.configure(api_key=GOOGLE_API_KEY)
 
 # File paths
