@@ -5,13 +5,7 @@ import torch
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-from transformers import GPT2Tokenizer, GPT2Model
-import google.generativeai as genai
-
-# Set up Google API Key
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gen-lang-client-0711936357-ec9fd589702f.json"
-api_key = "AIzaSyCbRx_gwIgU_XGBTI1IQyV3X6-F-QyWId8"  # Replace with your actual API key
-genai.configure(api_key=api_key)
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
 # Streamlit UI styling and layout
 st.markdown("""
@@ -57,21 +51,13 @@ def calculate_culture_fit_score(job_desc, resume_text, behavioral_answers):
     reasoning = f"Resume aligns with job description by {similarity_job_resume:.2f}. Behavioral responses add fit with score {similarity_behavioral:.2f}."
     return culture_fit_score, reasoning
 
-# Configure Gemini model
-generation_config = {
-    "temperature": 1,
-    "top_p": 0.95,
-    "top_k": 64,
-    "max_output_tokens": 8192,
-    "response_mime_type": "text/plain",
-}
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    generation_config=generation_config
-)
+# Load GPT-2 model and tokenizer for local generative model
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+gpt2_model = GPT2LMHeadModel.from_pretrained("gpt2")
 
-# Gemini model prompt generator
-def generate_gemini_assessment(job_description, resume_text, behavioral_answers):
+# GPT-2 model prompt generator
+def generate_gpt2_assessment(job_description, resume_text, behavioral_answers):
+    # Formulate the prompt
     prompt = f"""
     Job Description: {job_description}
 
@@ -86,16 +72,19 @@ def generate_gemini_assessment(job_description, resume_text, behavioral_answers)
 
     Please assess the culture fit based on alignment with company culture pillars and provide a score and reasoning.
     """
-    try:
-        # Call to generate content directly with all necessary configuration included
-        response = genai.generate_content(
-            model="gemini-1.5-flash",
-            prompt=prompt,
-            **generation_config
-        )
-        return response.text if response else "No response generated."
-    except Exception as e:
-        return f"Error during API call: {e}"
+    # Encode prompt and generate response
+    inputs = tokenizer.encode(prompt, return_tensors="pt")
+    outputs = gpt2_model.generate(
+        inputs,
+        max_length=500,
+        temperature=0.7,
+        top_p=0.9,
+        num_return_sequences=1
+    )
+
+    # Decode and return the generated text
+    response_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return response_text
 
 # Run assessments based on user input
 if st.button("Analyze Culture Fit"):
@@ -106,9 +95,9 @@ if st.button("Analyze Culture Fit"):
         st.write(f"Culture Fit Score: {round(score * 100, 2)}")
         st.write(f"Reasoning: {reasoning}")
 
-        # Calculate culture fit using Gemini model
-        gemini_response = generate_gemini_assessment(job_description, resume_text, behavioral_answers)
-        st.subheader("Gemini Model Culture Fit Assessment")
-        st.write(gemini_response)
+        # Calculate culture fit using GPT-2 model
+        gpt2_response = generate_gpt2_assessment(job_description, resume_text, behavioral_answers)
+        st.subheader("GPT-2 Model Culture Fit Assessment")
+        st.write(gpt2_response)
     else:
         st.error("Please fill in all fields to proceed.")
