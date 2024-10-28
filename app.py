@@ -128,7 +128,7 @@ print("Culture Fit Score:", score)
 print("Match Reasoning:", reasoning)
 
 # Configure the API with your Gemini API Key
-genai.configure(api_key="AIzaSyAIzX4GLFp0_cSf_Jv0GbFpfxIEjK1dDRg")
+genai.configure(api_key="AIzaSyCxOYdu26nvKLOrvDNEgWZdo2RwC3JLYvY")
 
 # Define the configuration for the model
 generation_config = {
