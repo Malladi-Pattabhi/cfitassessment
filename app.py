@@ -6,6 +6,7 @@ import torch
 import numpy as np
 import os
 import google.generativeai as genai
+from google.colab import userdata
 
 file_pathj = 'job_descriptions.xlsx'
 file_pathr = 'resumes.xlsx'
@@ -127,8 +128,15 @@ score, reasoning = calculate_culture_fit_score(job_desc_input, resume_text_input
 print("Culture Fit Score:", score)
 print("Match Reasoning:", reasoning)
 
+# Store your API key as a secret first. 
+# Replace 'YOUR_ACTUAL_API_KEY' with your actual API key.
+userdata.set_secret('AIzaSyCxOYdu26nvKLOrvDNEgWZdo2RwC3JLYvY')  
+
+# Now retrieve the API key using the key you used to store it.
+GOOGLE_API_KEY = userdata.get('AIzaSyCxOYdu26nvKLOrvDNEgWZdo2RwC3JLYvY')
+
 # Configure the API with your Gemini API Key
-genai.configure(api_key="AIzaSyCxOYdu26nvKLOrvDNEgWZdo2RwC3JLYvY")
+#genai.configure(api_key="AIzaSyCxOYdu26nvKLOrvDNEgWZdo2RwC3JLYvY")
 
 # Define the configuration for the model
 generation_config = {
