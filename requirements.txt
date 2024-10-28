@@ -6,5 +6,4 @@ transformers
 torch
 numpy
 google-generativeai
-google-colab
 openpyxl
